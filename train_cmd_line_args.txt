@@ -1,0 +1,1 @@
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask --no_flip --gpu_ids 0,1 --batch_size 16 --name near200_mask --n_epochs 600 --n_epochs_decay 400 --dataset_mode masked_aligned --input_nc 4 --model masked_pix2pix --load_size 256

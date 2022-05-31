@@ -150,6 +150,8 @@ class Visualizer():
                 if label_html_row != '':
                     label_html += '<tr>%s</tr>' % label_html_row
                 try:
+                    if images[0].shape[0] == 4:
+                        images[0] = images[0][:-1,:,:]
                     self.vis.images(images, nrow=ncols, win=self.display_id + 1,
                                     padding=2, opts=dict(title=title + ' images'))
                     label_html = '<table>%s</table>' % label_html
@@ -193,6 +195,8 @@ class Visualizer():
             for label, image in visuals.items():
                 image_numpy = util.tensor2im(image)
                 img_path = os.path.join(self.img_dir, 'epoch%.3d_%s.png' % (epoch, label))
+                if image_numpy.shape[-1] == 4:
+                    image_numpy = image_numpy[:,:,:-1]
                 util.save_image(image_numpy, img_path)
 
             # update website

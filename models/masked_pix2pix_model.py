@@ -3,7 +3,7 @@ from .base_model import BaseModel
 from . import networks
 
 
-class Pix2PixModel(BaseModel):
+class MaskedPix2PixModel(BaseModel):
     """ This class implements the pix2pix model, for learning a mapping from input images to output images given paired data.
 
     The model training requires '--dataset_mode aligned' dataset.
@@ -32,7 +32,8 @@ class Pix2PixModel(BaseModel):
         parser.set_defaults(norm='batch', netG='unet_256', dataset_mode='aligned')
         if is_train:
             parser.set_defaults(pool_size=0, gan_mode='vanilla')
-            parser.add_argument('--lambda_L1', type=float, default=100.0, help='weight for L1 loss')
+            parser.add_argument('--lambda1_L1', type=float, default=100.0, help='1st hyper-paramter for the conditional L1 loss')
+            parser.add_argument('--lambda2_L1', type=float, default=10.0, help='2nd hyper-paramter for the conditional L1 loss')
 
         return parser
 
@@ -108,7 +109,15 @@ class Pix2PixModel(BaseModel):
         pred_fake = self.netD(fake_AB)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
         # Second, G(A) = B
-        self.loss_G_L1 = self.criterionL1(self.fake_B, self.real_B) * self.opt.lambda_L1
+        M = self.real_A.clone()[:,-1,:,:]
+        M = M.unsqueeze(dim=1)
+        M = (M>0).float() # thresholding
+        fake_B_gen = self.fake_B.clone()
+        real_B_gen = self.real_B.clone()
+        cond_generated = self.criterionL1(M * fake_B_gen, M * real_B_gen)
+        M = 1 - M
+        cond_inherited = self.criterionL1(M * fake_B_gen, M * real_B_gen)
+        self.loss_G_L1 = cond_generated * self.opt.lambda1_L1 + cond_inherited * self.opt.lambda2_L1
         # combine loss and calculate gradients
         self.loss_G = self.loss_G_GAN + self.loss_G_L1
         self.loss_G.backward()
