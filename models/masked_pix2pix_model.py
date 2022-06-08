@@ -109,11 +109,16 @@ class MaskedPix2PixModel(BaseModel):
         pred_fake = self.netD(fake_AB)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
         # Second, G(A) = B
-        M = self.real_A.clone()[:,-1,:,:]
+        # M = self.real_A.clone()[:,-1,:,:]
+        # M = M.unsqueeze(dim=1)
+        # M = (M>0).float() # thresholding
+        # fake_B_gen = self.fake_B.clone()
+        # real_B_gen = self.real_B.clone()
+        M = self.real_A[:,-1,:,:]
         M = M.unsqueeze(dim=1)
         M = (M>0).float() # thresholding
-        fake_B_gen = self.fake_B.clone()
-        real_B_gen = self.real_B.clone()
+        fake_B_gen = self.fake_B
+        real_B_gen = self.real_B
         cond_generated = self.criterionL1(M * fake_B_gen, M * real_B_gen)
         M = 1 - M
         cond_inherited = self.criterionL1(M * fake_B_gen, M * real_B_gen)
