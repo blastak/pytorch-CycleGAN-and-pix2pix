@@ -1,1 +1,14 @@
---dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask --no_flip --gpu_ids 0,1 --batch_size 16 --name near200_mask --n_epochs 600 --n_epochs_decay 400 --dataset_mode masked_aligned --input_nc 4 --model masked_pix2pix --load_size 256
+# textarea 만 덮은거, mask 없는거
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_textarea --name near200_textarea --no_flip --gpu_ids 0,1 --batch_size 16 --n_epochs 250 --n_epochs_decay 250 --model pix2pix --dataset_mode aligned --input_nc 3 --load_size 256
+
+# mask 씌운거
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask --name near200_mask --no_flip --gpu_ids 0,1 --batch_size 16 --n_epochs 250 --n_epochs_decay 250 --model masked_pix2pix --dataset_mode masked_aligned --input_nc 4 --load_size 256
+
+# mask 씌운거 + gray
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask_gray --name near200_mask_gray --no_flip --gpu_ids 0,1 --batch_size 16 --n_epochs 250 --n_epochs_decay 250 --model masked_pix2pix --dataset_mode masked_aligned --input_nc 4 --load_size 256
+
+# mask 씌운거 + template1
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask_template1 --name near200_mask_template1 --no_flip --gpu_ids 0,1 --batch_size 16 --n_epochs 250 --n_epochs_decay 250 --model masked_pix2pix --dataset_mode masked_aligned --input_nc 4 --load_size 256
+
+# mask 씌운거 + no clone()
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask --name near200_mask_no_clone --no_flip --gpu_ids 0,1 --batch_size 16 --n_epochs 250 --n_epochs_decay 250 --model masked_pix2pix --dataset_mode masked_aligned --input_nc 4 --load_size 256

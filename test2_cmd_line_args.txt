@@ -1,0 +1,15 @@
+# textarea 만 덮은거, mask 없는거
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_textarea --gpu_ids 0,1 --name near200_textarea --dataset_mode aligned --input_nc 3 --model pix2pix --load_size 256 --num_test 5 --eval
+
+# mask 씌운거
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask --gpu_ids 0,1 --name near200_mask --dataset_mode masked_aligned --input_nc 4 --model masked_pix2pix --load_size 256 --num_test 5 --eval
+
+# mask 씌운거 + gray
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask_gray --gpu_ids 0,1 --name near200_mask_gray --dataset_mode masked_aligned --input_nc 4 --model masked_pix2pix --load_size 256 --num_test 5 --eval
+
+# mask 씌운거 + template1
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask_template1 --gpu_ids 0,1 --name near200_mask_template1 --dataset_mode masked_aligned --input_nc 4 --model masked_pix2pix --load_size 256 --num_test 5 --eval
+
+# mask 씌운거 + no clone()
+--dataroot E:\Dataset\CCPD\for_pix2pix\near200_mask --name near200_mask_no_clone --gpu_ids 0,1 --model masked_pix2pix --dataset_mode masked_aligned --input_nc 4 --load_size 256 --num_test 5 --eval
+
