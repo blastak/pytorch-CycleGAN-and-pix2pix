@@ -109,16 +109,12 @@ class MaskedPix2PixModel(BaseModel):
         pred_fake = self.netD(fake_AB)
         self.loss_G_GAN = self.criterionGAN(pred_fake, True)
         # Second, G(A) = B
-        # M = self.real_A.clone()[:,-1,:,:]
-        # M = M.unsqueeze(dim=1)
-        # M = (M>0).float() # thresholding
-        # fake_B_gen = self.fake_B.clone()
-        # real_B_gen = self.real_B.clone()
-        M = self.real_A[:,-1,:,:]
+        M = self.real_A.clone()[:,-1,:,:]
         M = M.unsqueeze(dim=1)
         M = (M>0).float() # thresholding
-        fake_B_gen = self.fake_B
-        real_B_gen = self.real_B
+        fake_B_gen = self.fake_B.clone()
+        real_B_gen = self.real_B.clone()
+
         cond_generated = self.criterionL1(M * fake_B_gen, M * real_B_gen)
         M = 1 - M
         cond_inherited = self.criterionL1(M * fake_B_gen, M * real_B_gen)
@@ -139,3 +135,24 @@ class MaskedPix2PixModel(BaseModel):
         self.optimizer_G.zero_grad()        # set G's gradients to zero
         self.backward_G()                   # calculate graidents for G
         self.optimizer_G.step()             # udpate G's weights
+
+import cv2
+import numpy as np
+
+def t2i(tensor):  # batch 가 1일때만 사용하자
+    sq = tensor.detach().cpu().squeeze(0)
+    img = sq.numpy()
+    img = np.transpose(img, (1,2,0))
+    img = img*127+127
+    img = img.astype(np.uint8)
+    if img.shape[-1] == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    elif img.shape[-1] == 4:
+        ii = img[:,:,:-1]
+        iii = cv2.cvtColor(ii, cv2.COLOR_RGB2BGR)
+        m = img[:,:,-1]
+        mmm = cv2.merge((m,m,m))
+        img = cv2.hconcat((iii,mmm))
+    cv2.imshow('a',img)
+    cv2.waitKey()
+
