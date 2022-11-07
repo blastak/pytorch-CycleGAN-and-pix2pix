@@ -13,3 +13,5 @@
 # mask 씌운거 + no clone()
 --dataroot ..\..\Dataset\CCPD\for_pix2pix\near200_mask --model masked_pix2pix --dataset_mode masked_aligned --input_nc 4 --name near200_mask_no_clone --gpu_ids 0,1 --load_size 256 --num_test 5 --eval
 
+
+--dataroot E:\Dataset\CCPD\for_pix2pix\near1000_mask --name near1000_mask_no_clone --gpu_ids 0,1 --model masked_pix2pix --dataset_mode masked_aligned --input_nc 4 --load_size 256 --num_test 5 --eval

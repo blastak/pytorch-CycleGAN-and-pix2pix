@@ -65,3 +65,32 @@ class MaskedAlignedDataset(BaseDataset):
     def __len__(self):
         """Return the total number of images in the dataset."""
         return len(self.AB_paths)
+
+    @staticmethod
+    def my_getitem(opt, npimg):
+        # AB = Image.open(AB_path).convert('RGB')
+        AB = Image.fromarray(npimg)
+
+        # split AB image into A and B
+        w, h = AB.size
+        w2 = int(w / 3)  # w2 = int(w / 2)
+        A = AB.crop((0, 0, w2, h))
+        B = AB.crop((w2, 0, w2 * 2, h))
+        M = AB.crop((w2 * 2, 0, w, h)).convert('L')
+
+        # apply the same transform to both A and B
+        transform_params = get_params(opt, A.size)
+        A_transform = get_transform(opt, transform_params, grayscale=(opt.input_nc == 1))
+        B_transform = get_transform(opt, transform_params, grayscale=(opt.output_nc == 1))
+        M_transform = get_transform(opt, transform_params, grayscale=True)
+
+        A = A_transform(A)
+        B = B_transform(B)
+        M = M_transform(M)
+
+        A = torch.cat((A, M), dim=0)
+
+        A = A.unsqueeze(dim=0)
+
+        # return {'A': A, 'B': B, 'A_paths': AB_path, 'B_paths': AB_path}
+        return {'A': A, 'B': A, 'A_paths': None, 'B_paths': None}
