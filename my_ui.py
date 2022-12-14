@@ -152,18 +152,17 @@ class MyWindow(QDialog, my_dialog.Ui_Dialog):
             img_roi = cv2.warpAffine(img_orig, A, img_gen.shape[1::-1])
             # cv2.imshow('img_roi',img_roi)
 
-            ### feature extraction in text area
-            # text area mask
+            ### text area mask
             cr_x = int(self.generator.char_xywh[0][0] * 1) - 10
             cr_y = int(self.generator.char_xywh[0][1] * 1) - 10
             cr_w = (self.generator.char_xywh[1][0] * 6 + self.generator.char_xywh[5][0]) * 1 + 20
             cr_h = self.generator.char_xywh[1][1] * 1 + 20
             mask_text_area = np.zeros_like(img_gen[:, :, 0])
             mask_text_area[cr_y:cr_y + cr_h, cr_x:cr_x + cr_w] = 255
-            # feature extraction
+            ### feature extraction
             img_gen_gray = cv2.cvtColor(img_gen, cv2.COLOR_BGRA2GRAY)
             pt_gen = cv2.goodFeaturesToTrack(img_gen_gray, 500, 0.01, 5, mask=mask_text_area)
-            # optional : feature extraction visualization
+            ### optional : feature extraction visualization
             # img_gen_cornerdisp = cv2.cvtColor(img_gen_gray,cv2.COLOR_GRAY2BGR)
             # for pt in pt_gen:
             #     cv2.circle(img_gen_cornerdisp, tuple(map(int, pt[0])), 1, (0, 0, 255), 2, cv2.LINE_AA)
@@ -178,7 +177,7 @@ class MyWindow(QDialog, my_dialog.Ui_Dialog):
             # cv2.imshow('img_roi_gray_histeq',img_roi_gray_histeq)
             ### feature tracking
             pt_tracked, status, err = cv2.calcOpticalFlowPyrLK(img_gen_gray, img_roi_gray_histeq, pt_gen, None)
-            # optional : feature tracking visualization
+            ### optional : feature tracking visualization
             # img_blend_disp = cv2.addWeighted(img_gen[:,:,:3], 0.5, img_roi, 0.5, 0)
             # for i in range(len(pt_tracked)):
             #     if status[i,0] == 0: # status = 0인 것은 제외, 잘못 찾은 것을 의미
@@ -274,11 +273,14 @@ class MyWindow(QDialog, my_dialog.Ui_Dialog):
             cr_y0 = cr_y + 10
             cr_w0 = cr_w - 20
             cr_h0 = cr_h - 20
+
+            ###### 원본과 같은 번호판을 겹칠 때
             # img_gencrop = np.zeros_like(img_gen[:, :, :3])
             # img_gencrop[cr_y0:cr_y0 + cr_h0, cr_x0:cr_x0 + cr_w0, :] = img_gen[cr_y0:cr_y0 + cr_h0, cr_x0:cr_x0 + cr_w0,:3].copy()
-            # img_gencrop_warped_big = cv2.warpPerspective(img_gencrop, T, img_orig.shape[1::-1])
+            ###### 원본과 다른 번호판을 겹칠 때
             img_gencrop = np.zeros_like(img_ref_model[:, :, :3])
             img_gencrop[cr_y0:cr_y0 + cr_h0, cr_x0:cr_x0 + cr_w0, :] = img_ref_model[cr_y0:cr_y0 + cr_h0, cr_x0:cr_x0 + cr_w0,:3].copy()
+
             img_gencrop_warped_big = cv2.warpPerspective(img_gencrop, T, img_orig.shape[1::-1])
 
             sq_center_x = (left + right) // 2
